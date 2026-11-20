@@ -1,0 +1,76 @@
+name: Buduj instalator Windows
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    name: Windows 10/11 x64
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Pobierz kod
+        uses: actions/checkout@v4
+
+      - name: Skonfiguruj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Zainstaluj zależności
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Testy parsera danych
+        run: python -m unittest discover -s tests -v
+
+      - name: Zbuduj aplikację EXE
+        run: >
+          pyinstaller --noconfirm --clean --windowed --onedir
+          --name ESP32-Data-Monitor
+          --collect-all pyqtgraph
+          --hidden-import serial.tools.list_ports
+          app/main.py
+
+      - name: Zainstaluj Inno Setup
+        run: choco install innosetup --yes --no-progress
+
+      - name: Zbuduj instalator
+        shell: pwsh
+        run: |
+          $programFilesX86 = [Environment]::GetEnvironmentVariable("ProgramFiles(x86)")
+          $iscc = Join-Path $programFilesX86 "Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            $iscc = Join-Path $env:ProgramFiles "Inno Setup 6\ISCC.exe"
+          }
+          if (-not (Test-Path $iscc)) {
+            throw "Nie znaleziono kompilatora Inno Setup (ISCC.exe)."
+          }
+          & $iscc "installer\setup.iss"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Kompilacja instalatora nie powiodła się."
+          }
+
+      - name: Dodaj instalator jako artefakt
+        uses: actions/upload-artifact@v4
+        with:
+          name: ESP32-Data-Monitor-Installer
+          path: installer/Output/ESP32-Data-Monitor-Setup.exe
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Dodaj sam program jako artefakt
+        uses: actions/upload-artifact@v4
+        with:
+          name: ESP32-Data-Monitor-Portable
+          path: dist/ESP32-Data-Monitor/
+          if-no-files-found: error
+          retention-days: 30
