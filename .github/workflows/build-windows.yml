@@ -38,6 +38,7 @@ jobs:
           --name ESP32-Data-Monitor
           --collect-all pyqtgraph
           --hidden-import serial.tools.list_ports
+          --paths .
           app/main.py
 
       - name: Zainstaluj Inno Setup
