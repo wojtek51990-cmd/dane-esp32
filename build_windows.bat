@@ -11,7 +11,7 @@ if errorlevel 1 exit /b 1
 py -3 -m unittest discover -s tests -v
 if errorlevel 1 exit /b 1
 
-py -3 -m PyInstaller --noconfirm --clean --windowed --onedir --name ESP32-Data-Monitor --collect-all pyqtgraph --hidden-import serial.tools.list_ports app\main.py
+py -3 -m PyInstaller --noconfirm --clean --windowed --onedir --name ESP32-Data-Monitor --collect-all pyqtgraph --hidden-import serial.tools.list_ports --paths . app\main.py
 if errorlevel 1 exit /b 1
 
 set "ISCC=C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
