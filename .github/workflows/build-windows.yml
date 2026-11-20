@@ -29,6 +29,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Przygotuj kompilator C++
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Przebuduj bootloader PyInstaller ze źródeł
+        shell: pwsh
+        run: |
+          python -m pip uninstall -y PyInstaller
+          python -m pip cache remove PyInstaller
+          $env:PYINSTALLER_COMPILE_BOOTLOADER = "1"
+          python -m pip install --verbose --no-cache-dir --no-binary=PyInstaller "PyInstaller>=6.10,<7"
+
       - name: Testy parsera danych
         run: python -m unittest discover -s tests -v
 
