@@ -13,6 +13,10 @@ Program do odbioru danych z ESP32 przez USB (port szeregowy COM) i prezentowania
 
 Interfejs programu jest po polsku.
 
+### Informacja o antywirusach
+
+Program jest pakowany do EXE przez PyInstaller. Niektóre antywirusy mogą heurystycznie oznaczać aplikacje zbudowane tym narzędziem; samo ostrzeżenie nie rozstrzyga, czy plik jest złośliwy. Workflow buduje własny bootloader PyInstaller ze źródeł, co według dokumentacji PyInstaller może ograniczyć fałszywe wykrycia gotowych bootloaderów. Nie daje to gwarancji braku alarmów. Plik nie jest podpisany certyfikatem Authenticode.
+
 ## Pobranie instalatora
 
 Po zakończeniu kompilacji otwórz kartę **Actions** w repozytorium, wybierz ostatnie wykonanie workflow **Buduj instalator Windows**, a następnie pobierz artefakt **ESP32-Data-Monitor-Installer**. W ZIP znajduje się plik instalacyjny EXE.
