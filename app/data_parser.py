@@ -44,7 +44,7 @@ class DataParser:
         if not text or text.startswith("#"):
             return None
 
-        if text.startswith("{"):
+        if text.startswith(("{", "[")):
             parsed = self._parse_json(text)
             if parsed:
                 return parsed
